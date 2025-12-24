@@ -9,9 +9,13 @@ return {
 		"LazyGitFilterCurrentFile",
 	},
 	dependencies = {
+    "nvim-telescope/telescope.nvim",
 		"nvim-lua/plenary.nvim",
 	},
-  keys = {
-    { "<leader>lg", "<cmd>LazyGit<cr>", desc = "Lazygit" },
-  },
+	keys = {
+		{ "<leader>lg", "<cmd>LazyGit<cr>", desc = "Lazygit" },
+	},
+	config = function()
+		require("telescope").load_extension("lazygit")
+	end,
 }
