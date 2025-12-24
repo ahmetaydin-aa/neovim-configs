@@ -72,7 +72,6 @@ return {
 			vim.api.nvim_create_autocmd("LspAttach", {
 				group = vim.api.nvim_create_augroup("UserLspConfig", {}),
 				callback = function(ev)
-					local opts = { buffer = ev.buf }
 					local telescope = require("telescope.builtin")
 
 					-- Configure diagnostics for capabilities like inline warning/error/info virtual text etc.
@@ -85,31 +84,44 @@ return {
 						severity_sort = true,
 					})
 
-					vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-					vim.keymap.set("n", "gd", telescope.lsp_definitions, opts)
-					vim.keymap.set("n", "gi", telescope.lsp_implementations, opts)
-					vim.keymap.set("n", "gr", telescope.lsp_references, opts)
-					vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-					vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+					local function getOpts(desc)
+						return {
+							buffer = ev.buf,
+							desc = "LSP: " .. desc,
+						}
+					end
+
+					vim.keymap.set("n", "K", vim.lsp.buf.hover, getOpts("Hover Documentation"))
+					vim.keymap.set("n", "gd", telescope.lsp_definitions, getOpts("[G]oto [D]efinition"))
+					vim.keymap.set("n", "gi", telescope.lsp_implementations, getOpts("[G]oto [I]mplementation"))
+					vim.keymap.set("n", "gr", telescope.lsp_references, getOpts("[G]oto [R]eferences"))
+					vim.keymap.set("n", "gt", telescope.lsp_type_definitions, getOpts("[G]oto [T]ype Definition"))
+					vim.keymap.set("n", "<leader>ds", function()
+						telescope.lsp_document_symbols({
+							show_line = true,
+						})
+					end, getOpts("[D]ocument [S]ymbols"))
+					vim.keymap.set("n", "<leader>ws", function()
+						telescope.lsp_dynamic_workspace_symbols({
+							show_line = true,
+						})
+					end, getOpts("[W]orkspace [S]ymbols"))
+					vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, getOpts("[R]e[n]ame"))
+					vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, getOpts("[C]ode [A]ction"))
 					vim.keymap.set("n", "<leader>f", function()
 						vim.lsp.buf.format({ async = true })
-					end, opts)
+					end, getOpts("[F]ormat Code"))
 
 					-- Diagnostics shortcuts
-					vim.keymap.set(
-						"n",
-						"[d",
-						vim.diagnostic.goto_prev,
-						{ desc = "LSP: [D]iagnostics Goto Previous Issue" }
-					)
-					vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "LSP: [D]iagnostics Goto Next Issue" })
+					vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, getOpts("[D]iagnostics Goto Previous Issue"))
+					vim.keymap.set("n", "]d", vim.diagnostic.goto_next, getOpts("[D]iagnostics Goto Next Issue"))
 					vim.keymap.set("n", "<leader>dt", function()
 						local current = vim.diagnostic.config()
 
 						vim.diagnostic.config({
 							virtual_text = not current.virtual_text,
 						})
-					end, { desc = "LSP: [D]iagnostics [T]oggle lines" })
+					end, getOpts("[D]iagnostics [T]oggle Virtual Text"))
 				end,
 			})
 		end,
