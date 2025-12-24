@@ -29,9 +29,7 @@ return {
           --   extra_args = { "-c", "/google_checks.xml" }, -- or "/sun_checks.xml" or path to self written rules
           -- }),                                         -- For Java files (must install `checkstyle` first)
           null_ls.builtins.diagnostics.pylint,    -- For python
-          null_ls.builtins.diagnostics.spectral,  -- For JSON/YAML files
           null_ls.builtins.diagnostics.stylelint, -- For style files like CSS, LESS etc.
-          null_ls.builtins.diagnostics.vacuum,    -- For OpenAPI YAML/JSON files
           require("none-ls.diagnostics.eslint"),  -- requires none-ls-extras.nvim
         },
       })
