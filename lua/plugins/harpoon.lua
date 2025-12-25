@@ -1,3 +1,14 @@
+local function toggle_file(file_list)
+  local current_file = vim.fn.expand("%")
+  for _, value in ipairs(file_list.items) do
+    if value.value == current_file then
+      file_list:remove()
+      return
+    end
+  end
+  file_list:add()
+end
+
 return {
   {
     "ThePrimeagen/harpoon",
@@ -10,7 +21,7 @@ return {
       harpoon:setup()
       -- REQUIRED
 
-      vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
+      vim.keymap.set("n", "<leader>a", function() toggle_file(harpoon:list()) end)
       vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
 
       vim.keymap.set("n", "<C-1>", function() harpoon:list():select(1) end)
